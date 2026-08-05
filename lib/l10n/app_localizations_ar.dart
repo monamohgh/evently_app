@@ -24,6 +24,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dark => 'داكن';
 
   @override
+  String get dark_mode => 'الوضع الداكن';
+
+  @override
   String get light => 'فاتح';
 
   @override
