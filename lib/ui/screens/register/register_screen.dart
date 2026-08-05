@@ -12,9 +12,26 @@ import '../../../utils/size_config.dart';
 import '../widgets/elevated_button_widget.dart';
 import '../widgets/text_form_field_widget.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  var nameController = TextEditingController();
+  var emailController = TextEditingController();
+  var passwordController = TextEditingController();
+  var rePasswordController = TextEditingController();
+  var formKey = GlobalKey<FormState>();
+  bool _passwordVisible =true;
+  bool _rePasswordVisible =true;
+  @override
+  void initState() {
+    _passwordVisible = false;
+    _rePasswordVisible=false;
+  }
   @override
   Widget build(BuildContext context) {
     var themeProvider = Provider.of<AppThemeProvider>(context);
@@ -39,159 +56,240 @@ class RegisterScreen extends StatelessWidget {
           vertical: SizeConfig.height(context) * .03,
         ),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: SizeConfig.height(context) * .02,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.create_your_account,
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              TextFormFieldWidget(
-                borderColor: Theme.of(context).dividerColor,
-                filled: true,
-                fillColor: themeProvider.isDarkMode()
-                    ? AppColors.darkInputColor
-                    : AppColors.strokeWhiteColor,
-                hintText: AppLocalizations.of(context)!.enter_your_name,
-                hintStyle: Theme.of(context).textTheme.bodyLarge,
-                prefixIcon: Icon(
-                  Icons.person_outline_sharp,
-                  color: AppColors.lightGrayColor,
+          child: Form(
+            key:formKey ,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: SizeConfig.height(context) * .02,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.create_your_account,
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
-              ),
-              TextFormFieldWidget(
-                borderColor: Theme.of(context).dividerColor,
-                filled: true,
-                fillColor: themeProvider.isDarkMode()
-                    ? AppColors.darkInputColor
-                    : AppColors.strokeWhiteColor,
-                hintText: AppLocalizations.of(context)!.enter_your_email,
-                hintStyle: Theme.of(context).textTheme.bodyLarge,
-                prefixIcon: Icon(
-                  Icons.email_outlined,
-                  color: AppColors.lightGrayColor,
-                ),
-              ),
-              TextFormFieldWidget(
-                borderColor: Theme.of(context).dividerColor,
-                filled: true,
-                fillColor: themeProvider.isDarkMode()
-                    ? AppColors.darkInputColor
-                    : AppColors.strokeWhiteColor,
-                hintText: AppLocalizations.of(context)!.enter_your_password,
-                hintStyle: Theme.of(context).textTheme.bodyLarge,
-                prefixIcon: Icon(
-                  Icons.lock_outline,
-                  color: AppColors.lightGrayColor,
-                ),
-                suffixIcon: Icon(
-                  Icons.visibility_off,
-                  color: AppColors.lightGrayColor,
-                ),
-              ),
-              TextFormFieldWidget(
-                borderColor: Theme.of(context).dividerColor,
-                filled: true,
-                fillColor: themeProvider.isDarkMode()
-                    ? AppColors.darkInputColor
-                    : AppColors.strokeWhiteColor,
-                hintText: AppLocalizations.of(context)!.confirm_your_password,
-                hintStyle: Theme.of(context).textTheme.bodyLarge,
-                prefixIcon: Icon(
-                  Icons.lock_outline,
-                  color: AppColors.lightGrayColor,
-                ),
-                suffixIcon: Icon(
-                  Icons.visibility_off,
-                  color: AppColors.lightGrayColor,
-                ),
-              ),
-              SizedBox(height: SizeConfig.height(context)*.02,),
-              ElevatedButtonWidget(
-                //todo:navigate to register screen
-                onPressed: register,
-                verticalPadding: SizeConfig.height(context) * .01,
-                backgroundColor: Theme.of(context).cardColor,
-                child: Text(
-                  AppLocalizations.of(context)!.sign_up,
-                  style: AppStyle.medium20White,
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '${AppLocalizations.of(context)!.already_have_an_account}?',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                TextFormFieldWidget(
+                  keyboardType: TextInputType.text,
+                  controller: nameController,
+                  validator: (text) {
+                    if (text == null || text.trim().isEmpty) {
+                      return "Please enter your name";
+                    }
+                  },
+                  borderColor: Theme.of(context).dividerColor,
+                  filled: true,
+                  fillColor: themeProvider.isDarkMode()
+                      ? AppColors.darkInputColor
+                      : AppColors.strokeWhiteColor,
+                  hintText: AppLocalizations.of(context)!.enter_your_name,
+                  hintStyle: Theme.of(context).textTheme.bodyLarge,
+                  prefixIcon: Icon(
+                    Icons.person_outline,
+                    color: AppColors.lightGrayColor,
                   ),
-                  TextButton(
+                ),
+                TextFormFieldWidget(
+                  keyboardType: TextInputType.emailAddress,
+                  controller: emailController,
+                  validator: (text) {
+                    if (text == null || text.trim().isEmpty) {
+                      return "Please enter your email";
+                    }
+                    final bool emailValid = RegExp(
+                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+                    ).hasMatch(emailController.text);
+                    if (!emailValid) {
+                      return "Please Enter valid email";
+                    }
+                    return null;
+                  },
+                  borderColor: Theme.of(context).dividerColor,
+                  filled: true,
+                  fillColor: themeProvider.isDarkMode()
+                      ? AppColors.darkInputColor
+                      : AppColors.strokeWhiteColor,
+                  hintText: AppLocalizations.of(context)!.enter_your_email,
+                  hintStyle: Theme.of(context).textTheme.bodyLarge,
+                  prefixIcon: Icon(
+                    Icons.email_outlined,
+                    color: AppColors.lightGrayColor,
+                  ),
+                ),
+
+                TextFormFieldWidget(
+                  keyboardType: TextInputType.number,
+                  obscureText: !_passwordVisible,
+                  ///This will obscure text dynamically
+                  controller: passwordController,
+                  validator: (text) {
+                    if (text == null || text.trim().isEmpty) {
+                      return "Please enter your password";
+                    }
+                    if (text.length < 6) {
+                      return "Password should be at least 6 chars ";
+                    }
+                    return null;
+                  },
+                  borderColor: Theme.of(context).dividerColor,
+                  filled: true,
+                  fillColor: themeProvider.isDarkMode()
+                      ? AppColors.darkInputColor
+                      : AppColors.strokeWhiteColor,
+                  hintText: AppLocalizations.of(context)!.enter_your_password,
+                  hintStyle: Theme.of(context).textTheme.bodyLarge,
+                  prefixIcon: Icon(
+                    Icons.lock_outline,
+                    color: AppColors.lightGrayColor,
+                  ),
+                  suffixIcon: IconButton(
+                    color: AppColors.lightGrayColor,
+
+                    icon: Icon(
+                      /// Based on passwordVisible state choose the icon
+                      _passwordVisible
+                          ? Icons.visibility_rounded
+                          : Icons.visibility_off,
+                    ),
                     onPressed: () {
-                      //todo:navigate to login screen
-                      Navigator.pop(context);
+                      setState(() {
+                        /// Update the state i.e. toogle the state of passwordVisible variable
+                        _passwordVisible = !_passwordVisible;
+                      });
                     },
-                    child: Text(
-                      AppLocalizations.of(context)!.login,
-                      style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                        decoration: TextDecoration.underline,
-                        decorationThickness: 2,
-                        decorationColor: Theme.of(context).cardColor,
-                      ),
+                  ),
+                ),
+
+                TextFormFieldWidget(
+                  keyboardType: TextInputType.number,
+                  obscureText: !_rePasswordVisible,
+                  ///This will obscure text dynamically
+                  controller: rePasswordController,
+                  validator: (text) {
+                    if (text == null || text.trim().isEmpty) {
+                      return "Please enter your password";
+                    }
+                    if (text!=passwordController.text ) {
+                      return "Password should be the same ";
+
+                    }
+                    return null;
+                  },
+                  borderColor: Theme.of(context).dividerColor,
+                  filled: true,
+                  fillColor: themeProvider.isDarkMode()
+                      ? AppColors.darkInputColor
+                      : AppColors.strokeWhiteColor,
+                  hintText: AppLocalizations.of(context)!.confirm_your_password,
+                  hintStyle: Theme.of(context).textTheme.bodyLarge,
+                  prefixIcon: Icon(
+                    Icons.lock_outline,
+                    color: AppColors.lightGrayColor,
+                  ),
+                  suffixIcon: IconButton(
+                    color: AppColors.lightGrayColor,
+                    icon: Icon(
+                      /// Based on passwordVisible state choose the icon
+                      _rePasswordVisible
+                          ? Icons.visibility_rounded
+                          : Icons.visibility_off,
                     ),
+                    onPressed: () {
+                      setState(() {
+                        /// Update the state i.e. toogle the state of passwordVisible variable
+                        _rePasswordVisible = !_rePasswordVisible;
+                      });
+                    },
                   ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Divider(
-                      color: Theme.of(context).dividerColor,
-                      thickness: 2,
-                      indent: SizeConfig.width(context) * .01,
-                      endIndent: SizeConfig.width(context) * .04,
-                    ),
+                ),
+                SizedBox(height: SizeConfig.height(context)*.02,),
+                ElevatedButtonWidget(
+                  //todo:navigate to register screen
+                  onPressed: register,
+                  verticalPadding: SizeConfig.height(context) * .01,
+                  backgroundColor: Theme.of(context).cardColor,
+                  child: Text(
+                    AppLocalizations.of(context)!.sign_up,
+                    style: AppStyle.medium20White,
                   ),
-                  Text(
-                    AppLocalizations.of(context)!.or,
-                    style: Theme.of(context).textTheme.labelMedium,
-                  ),
-                  Expanded(
-                    child: Divider(
-                      color: Theme.of(context).dividerColor,
-                      thickness: 2,
-                      indent: SizeConfig.width(context) * .04,
-                      endIndent: SizeConfig.width(context) * .01,
-                    ),
-                  ),
-                ],
-              ),
-              ElevatedButtonWidget(
-                onPressed: () {
-                  //todo:sign up with google
-                },
-                verticalPadding: SizeConfig.height(context) * .02,
-                backgroundColor: themeProvider.isDarkMode()
-                    ? AppColors.darkInputColor
-                    : AppColors.whiteColor,
-                borderColor: Theme.of(context).dividerColor,
-                child: Row(
-                  spacing: SizeConfig.width(context) * .04,
+                ),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(AppAssets.googleIcon),
                     Text(
-                      AppLocalizations.of(context)!.sign_up_with_google,
-                      style: Theme.of(context).textTheme.labelSmall,
+                      '${AppLocalizations.of(context)!.already_have_an_account}?',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        //todo:navigate to login screen
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)!.login,
+                        style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                          decoration: TextDecoration.underline,
+                          decorationThickness: 2,
+                          decorationColor: Theme.of(context).cardColor,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
+                Row(
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        color: Theme.of(context).dividerColor,
+                        thickness: 2,
+                        indent: SizeConfig.width(context) * .01,
+                        endIndent: SizeConfig.width(context) * .04,
+                      ),
+                    ),
+                    Text(
+                      AppLocalizations.of(context)!.or,
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                    Expanded(
+                      child: Divider(
+                        color: Theme.of(context).dividerColor,
+                        thickness: 2,
+                        indent: SizeConfig.width(context) * .04,
+                        endIndent: SizeConfig.width(context) * .01,
+                      ),
+                    ),
+                  ],
+                ),
+                ElevatedButtonWidget(
+                  onPressed: () {
+                    //todo:sign up with google
+                  },
+                  verticalPadding: SizeConfig.height(context) * .02,
+                  backgroundColor: themeProvider.isDarkMode()
+                      ? AppColors.darkInputColor
+                      : AppColors.whiteColor,
+                  borderColor: Theme.of(context).dividerColor,
+                  child: Row(
+                    spacing: SizeConfig.width(context) * .04,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(AppAssets.googleIcon),
+                      Text(
+                        AppLocalizations.of(context)!.sign_up_with_google,
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  void register() {}
+  void register() {
+    if (formKey.currentState?.validate()==true){
+      //todo:register
+
+    }
+  }
 }

@@ -42,6 +42,9 @@ class _AddEventScreenState extends State<AddEventScreen> {
   String formateTime = '';
   DateTime? selectedDate;
   String formateDate = '';
+  var formKey=GlobalKey<FormState>();
+  var title='';
+  var description='';
 
   @override
   Widget build(BuildContext context) {
@@ -99,108 +102,135 @@ class _AddEventScreenState extends State<AddEventScreen> {
           vertical: SizeConfig.height(context) * .02,
         ),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: SizeConfig.height(context) * .02,
-            children: [
-              Container(
-                height: SizeConfig.height(context) * .25,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: Theme.of(context).dividerColor,
-                    width: 2,
-                  ),
-                  image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: AssetImage(
-                      themeProvider.isDarkMode()
-                          ? eventDarkImagesList[selectedIndex]
-                          : eventLightImagesList[selectedIndex],
+          child: Form(
+            key:  formKey ,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: SizeConfig.height(context) * .02,
+              children: [
+                Container(
+                  height: SizeConfig.height(context) * .25,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Theme.of(context).dividerColor,
+                      width: 2,
+                    ),
+                    image: DecorationImage(
+                      fit: BoxFit.fill,
+                      image: AssetImage(
+                        themeProvider.isDarkMode()
+                            ? eventDarkImagesList[selectedIndex]
+                            : eventLightImagesList[selectedIndex],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: SizeConfig.height(context) * .05,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        selectedIndex = index;
-                        setState(() {});
-                      },
-                      child: TabItemWidget(
-                        isSelected: selectedIndex == index,
-                        eventName: eventsNameList[index],
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return SizedBox(width: SizeConfig.width(context) * .02);
-                  },
-                  itemCount: eventsNameList.length,
+                SizedBox(
+                  height: SizeConfig.height(context) * .05,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () {
+                          selectedIndex = index;
+                          setState(() {});
+                        },
+                        child: TabItemWidget(
+                          isSelected: selectedIndex == index,
+                          eventName: eventsNameList[index],
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return SizedBox(width: SizeConfig.width(context) * .02);
+                    },
+                    itemCount: eventsNameList.length,
+                  ),
                 ),
-              ),
-              Text(
-                AppLocalizations.of(context)!.title,
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              TextFormFieldWidget(
-                filled: true,
-                fillColor: Theme.of(context).highlightColor,
-                borderColor: Theme.of(context).dividerColor,
-                hintText: AppLocalizations.of(context)!.event_title,
-                hintStyle: Theme.of(context).textTheme.bodyLarge,
-              ),
-              Text(
-                AppLocalizations.of(context)!.description,
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              TextFormFieldWidget(
-                maxLines: 6,
-                filled: true,
-                fillColor: Theme.of(context).highlightColor,
-                borderColor: Theme.of(context).dividerColor,
-                hintText: AppLocalizations.of(context)!.event_description,
-                hintStyle: Theme.of(context).textTheme.bodyLarge,
-              ),
-              DateOrTimeWidget(
-                onChooseDateOrTime: onChooseDate,
-                title: AppLocalizations.of(context)!.event_date,
-                icon: Icons.date_range,
-                chooseText: selectedDate == null
-                    ? AppLocalizations.of(context)!.choose_date
-                    : formateDate,
-                // :'${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'//format date manual
-              ),
-              DateOrTimeWidget(
-                onChooseDateOrTime: onChooseTime,
-                title: AppLocalizations.of(context)!.event_time,
-                icon: Icons.watch_later_outlined,
-                chooseText:selectedTime==null
-                ?AppLocalizations.of(context)!.choose_time
-                    :formateTime
-              ),
-              ElevatedButtonWidget(
-                onPressed: addEvent,
-                verticalPadding: SizeConfig.height(context) * .01,
-                backgroundColor: Theme.of(context).cardColor,
-                child: Text(
-                  AppLocalizations.of(context)!.add_event,
-                  style: AppStyle.medium20White,
+                Text(
+                  AppLocalizations.of(context)!.title,
+                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
-              ),
-              SizedBox(height: SizeConfig.height(context) * .04),
-            ],
+                TextFormFieldWidget(
+                  onChanged: (text){
+                    title=text;
+                  },
+                  filled: true,
+                  fillColor: Theme.of(context).highlightColor,
+                  borderColor: Theme.of(context).dividerColor,
+                  hintText: AppLocalizations.of(context)!.event_title,
+                  hintStyle: Theme.of(context).textTheme.bodyLarge,
+                  validator:  (text) {
+                    if(text==null||text.trim().isEmpty){///trim=>to remove the spacing  before and after the word
+                      return "Please enter Event Title";///invalid
+                    }
+                    return null;///valid
+                  },
+                ),
+                Text(
+                  AppLocalizations.of(context)!.description,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                TextFormFieldWidget(
+                  onChanged: (text){
+                    description=text;
+                  },
+                  maxLines: 6,
+                  filled: true,
+                  fillColor: Theme.of(context).highlightColor,
+                  borderColor: Theme.of(context).dividerColor,
+                  hintText: AppLocalizations.of(context)!.event_description,
+                  hintStyle: Theme.of(context).textTheme.bodyLarge,
+                  validator: (text) {
+                    if(text==null||text.trim().isEmpty){
+                      return "Please enter Event Description";
+                    }
+                    return null;
+                  },
+                ),
+                DateOrTimeWidget(
+                  onChooseDateOrTime: onChooseDate,
+                  title: AppLocalizations.of(context)!.event_date,
+                  icon: Icons.date_range,
+                  chooseText: selectedDate == null
+                      ? AppLocalizations.of(context)!.choose_date
+                      : formateDate,
+                  // :'${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}'//format date manual
+                ),
+                DateOrTimeWidget(
+                  onChooseDateOrTime: onChooseTime,
+                  title: AppLocalizations.of(context)!.event_time,
+                  icon: Icons.watch_later_outlined,
+                  chooseText:selectedTime==null
+                  ?AppLocalizations.of(context)!.choose_time
+                      :formateTime
+                ),
+                ElevatedButtonWidget(
+                  onPressed: addEvent,
+                  verticalPadding: SizeConfig.height(context) * .01,
+                  backgroundColor: Theme.of(context).cardColor,
+                  child: Text(
+                    AppLocalizations.of(context)!.add_event,
+                    style: AppStyle.medium20White,
+                  ),
+                ),
+                SizedBox(height: SizeConfig.height(context) * .04),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  void addEvent() {}
+  void addEvent() {
+    if(formKey.currentState?.validate()==true){
+      ///validate method to see if validator inside the textFromField return String(return false)=>invalid or null(return true)=>valid
+      //todo:add event
+
+    }
+  }
 
   void onChooseDate() async {
     var chooseDate = await showDatePicker(

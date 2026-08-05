@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../providers/app_theme_provider.dart';
 typedef OnChanged =void Function(String)?;
+typedef OnValidator =String? Function(String?)?;
 class TextFormFieldWidget extends StatelessWidget {
   final double? radius;
   final Color borderColor;
@@ -18,16 +19,21 @@ class TextFormFieldWidget extends StatelessWidget {
   final int? maxLines;
   final TextEditingController? controller;
   final OnChanged onChanged;
+  final OnValidator validator;
+  final TextInputType? keyboardType;
+  final bool obscureText;
    TextFormFieldWidget({super.key,  this.maxLines=1,required this.borderColor,this.radius,this.filled,this.fillColor,
      this.hintText,this.labelText,this.hintStyle,this.labelStyle,
    this.prefixIcon,this.suffixIcon,
-     this.onChanged,this.controller
+     this.onChanged,this.controller,
+     this.validator,
+     this.keyboardType=TextInputType.text,
+     this.obscureText =false
    });
 
   @override
   Widget build(BuildContext context) {
     var themeProvider = Provider.of<AppThemeProvider>(context);
-
     return TextFormField(
       decoration: InputDecoration(
         enabledBorder: builtDecorationBorder(
@@ -54,6 +60,10 @@ class TextFormFieldWidget extends StatelessWidget {
       maxLines: maxLines,
       controller:controller ,
       onChanged:onChanged ,
+      validator:validator ,
+      keyboardType:keyboardType ,
+      obscureText: obscureText,
+
     );
   }
   OutlineInputBorder builtDecorationBorder({required double radius,required Color borderColor}){
