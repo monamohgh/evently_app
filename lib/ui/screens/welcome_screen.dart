@@ -42,109 +42,111 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         padding: EdgeInsets.symmetric(
           horizontal: SizeConfig.width(context) * .03,
         ),
-        child: Column(
-          spacing: SizeConfig.height(context) * .04,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image(
-              fit: BoxFit.fill,
-              width: double.infinity,
-              image: AssetImage(
-                themeProvider.isDarkMode()
-                    ? AppAssets.firstOnBoardingDark
-                    : AppAssets.firstOnBoardingLight,
+        child: SingleChildScrollView(
+          child: Column(
+            spacing: SizeConfig.height(context) * .04,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image(
+                fit: BoxFit.fill,
+                width: double.infinity,
+                image: AssetImage(
+                  themeProvider.isDarkMode()
+                      ? AppAssets.firstOnBoardingDark
+                      : AppAssets.firstOnBoardingLight,
+                ),
               ),
-            ),
-            Text(
-              AppLocalizations.of(context)!.personalize_your_experience,
-              style: Theme.of(context).textTheme.headlineLarge,
-            ),
-            Text(
-              AppLocalizations.of(context)!.first_onboarding,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            Row(
-              // spacing: SizeConfig.width(context) * .1,
-              children: [
-                Text(
-                  AppLocalizations.of(context)!.language,
-                  style: Theme.of(context).textTheme.displaySmall
-                  // themeProvider.isDarkMode()
-                  //     ? AppStyle.medium18White
-                  //     : AppStyle.medium18MainColor,
-                ),
-                Spacer(),
-                Row(
-                  spacing: SizeConfig.width(context) * .04,
-                  children: [
-                    //todo:change language to English
-                    buildLanguageOption(
-                      languageProvider: languageProvider,
-                      langCode: 'en',
-                      languageLabel: AppLocalizations.of(context)!.english,
-                      mode: currentMode,
-                    ),
-                    buildLanguageOption(
-                      //todo:change language to Arabic
-                      languageProvider: languageProvider,
-                      langCode: 'ar',
-                      languageLabel: AppLocalizations.of(context)!.arabic,
-                      mode: currentMode,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Row(
-              // spacing: SizeConfig.width(context) * .20,
-              children: [
-                Text(
-                  AppLocalizations.of(context)!.theme,
-                  style:Theme.of(context).textTheme.displaySmall
-                  // themeProvider.isDarkMode()
-                  //     ? AppStyle.medium18White
-                  //     : AppStyle.medium18MainColor,
-                ),
-                Spacer(),
-                Row(
-                  spacing: SizeConfig.width(context) * .04,
-                  children: [
-                    //todo:change theme to Light
-                    buildThemeOption(
-                      themeProvider: themeProvider,
-                      itemMode: ThemeMode.light,
-                      currentMode: currentMode,
-                      selectedIcon: Icons.sunny,
-                      unSelectedIcon: Icons.wb_sunny_outlined,
-                    ),
-
-                    //todo:change theme to Dark
-                    buildThemeOption(
-                      themeProvider: themeProvider,
-                      itemMode: ThemeMode.dark,
-                      currentMode: currentMode,
-                      selectedIcon: Icons.dark_mode,
-                      unSelectedIcon: Icons.dark_mode_outlined,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            ElevatedButtonWidget(
-              verticalPadding: SizeConfig.height(context) * .01,
-              child: Text(
-                AppLocalizations.of(context)!.lets_start,
-                style: AppStyle.medium20White,
+              Text(
+                AppLocalizations.of(context)!.personalize_your_experience,
+                style: Theme.of(context).textTheme.headlineLarge,
               ),
-              onPressed: () {
-                //todo:navigate to onboarding screen
-                Navigator.pushNamed(context, AppRoutes.onBoardingRouteName);
-              },
-              backgroundColor: themeProvider.isDarkMode()
-                  ? AppColors.mainDarkColor
-                  : AppColors.mainLightColor,
-            ),
-          ],
+              Text(
+                AppLocalizations.of(context)!.first_onboarding,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              Row(
+                // spacing: SizeConfig.width(context) * .1,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.language,
+                    style: Theme.of(context).textTheme.displaySmall
+                    // themeProvider.isDarkMode()
+                    //     ? AppStyle.medium18White
+                    //     : AppStyle.medium18MainColor,
+                  ),
+                  Spacer(),
+                  Row(
+                    spacing: SizeConfig.width(context) * .04,
+                    children: [
+                      //todo:change language to English
+                      buildLanguageOption(
+                        languageProvider: languageProvider,
+                        langCode: 'en',
+                        languageLabel: AppLocalizations.of(context)!.english,
+                        mode: currentMode,
+                      ),
+                      buildLanguageOption(
+                        //todo:change language to Arabic
+                        languageProvider: languageProvider,
+                        langCode: 'ar',
+                        languageLabel: AppLocalizations.of(context)!.arabic,
+                        mode: currentMode,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Row(
+                // spacing: SizeConfig.width(context) * .20,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.theme,
+                    style:Theme.of(context).textTheme.displaySmall
+                    // themeProvider.isDarkMode()
+                    //     ? AppStyle.medium18White
+                    //     : AppStyle.medium18MainColor,
+                  ),
+                  Spacer(),
+                  Row(
+                    spacing: SizeConfig.width(context) * .04,
+                    children: [
+                      //todo:change theme to Light
+                      buildThemeOption(
+                        themeProvider: themeProvider,
+                        itemMode: ThemeMode.light,
+                        currentMode: currentMode,
+                        selectedIcon: Icons.sunny,
+                        unSelectedIcon: Icons.wb_sunny_outlined,
+                      ),
+          
+                      //todo:change theme to Dark
+                      buildThemeOption(
+                        themeProvider: themeProvider,
+                        itemMode: ThemeMode.dark,
+                        currentMode: currentMode,
+                        selectedIcon: Icons.dark_mode,
+                        unSelectedIcon: Icons.dark_mode_outlined,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              ElevatedButtonWidget(
+                verticalPadding: SizeConfig.height(context) * .01,
+                child: Text(
+                  AppLocalizations.of(context)!.lets_start,
+                  style: AppStyle.medium20White,
+                ),
+                onPressed: () {
+                  //todo:navigate to onboarding screen
+                  Navigator.pushNamed(context, AppRoutes.onBoardingRouteName);
+                },
+                backgroundColor: themeProvider.isDarkMode()
+                    ? AppColors.mainDarkColor
+                    : AppColors.mainLightColor,
+              ),
+            ],
+          ),
         ),
       ),
     );

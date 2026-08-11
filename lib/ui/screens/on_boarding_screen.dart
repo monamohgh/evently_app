@@ -217,21 +217,23 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
         padding: EdgeInsets.symmetric(
           horizontal: SizeConfig.width(context) * .03,
         ),
-        child: Column(
-          spacing: SizeConfig.height(context) * .02,
-          children: [
-            image,
-            SizedBox(height: SizeConfig.height(context) * .1),
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: Text(
-                title,
-                style: Theme.of(context).textTheme.headlineLarge,
+        child: SingleChildScrollView(
+          child: Column(
+            spacing: SizeConfig.height(context) * .02,
+            children: [
+              image,
+              SizedBox(height: SizeConfig.height(context) * .1),
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
               ),
-            ),
-            Text(body, style: Theme.of(context).textTheme.bodyLarge),
-            button,
-          ],
+              Text(body, style: Theme.of(context).textTheme.bodyLarge),
+              button,
+            ],
+          ),
         ),
       ),
     );

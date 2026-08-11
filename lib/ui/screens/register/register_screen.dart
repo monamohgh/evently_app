@@ -1,4 +1,5 @@
 import 'package:evently_app/utils/app_style.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../../providers/app_theme_provider.dart';
 import '../../../utils/app_assets.dart';
 import '../../../utils/app_colors.dart';
+import '../../../utils/app_routes.dart';
+import '../../../utils/dialog_utils.dart';
 import '../../../utils/size_config.dart';
 
 import '../widgets/elevated_button_widget.dart';
@@ -20,10 +23,10 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  var nameController = TextEditingController();
-  var emailController = TextEditingController();
-  var passwordController = TextEditingController();
-  var rePasswordController = TextEditingController();
+  var nameController = TextEditingController(text:'Mona');
+  var emailController = TextEditingController(text:'mona@gmail.com');
+  var passwordController = TextEditingController(text: '123456' );
+  var rePasswordController = TextEditingController(text: '123456' );
   var formKey = GlobalKey<FormState>();
   bool _passwordVisible =true;
   bool _rePasswordVisible =true;
@@ -73,6 +76,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     if (text == null || text.trim().isEmpty) {
                       return "Please enter your name";
                     }
+                    return null;
                   },
                   borderColor: Theme.of(context).dividerColor,
                   filled: true,
@@ -285,10 +289,64 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
-
-  void register() {
+  void register()async {
     if (formKey.currentState?.validate()==true){
       //todo:register
+      ///FirebaseAuth.instance=>create object from FirebaseAuth class
+      try {
+        //todo:show loading
+        DialogUtils.showLoading(context: context, loadingText: 'Waiting....');
+        final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text,
+          password: passwordController.text,
+        );
+        //todo:hide loading
+        DialogUtils.hideLoading(context: context);
+        //todo:show message=>success
+        DialogUtils.showMessage(context: context,
+          message: 'Register Successfully',
+          title: 'Success',
+          positiveActionName: 'Ok',
+          positiveAction: () {
+            Navigator.pushNamed(context, AppRoutes.homeRouteName);
+          },
+        );
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'weak-password') {
+          //todo:hide loading
+          DialogUtils.hideLoading(context: context);
+          //todo:show message=>error
+          DialogUtils.showMessage(
+            context: context,
+            message: 'The password provided is too weak.',
+            title: 'Error ',
+            positiveActionName: 'Ok',
+
+          );
+        } else if (e.code == 'email-already-in-use') {
+          //todo:hide loading
+          DialogUtils.hideLoading(context: context);
+          //todo:show message=>error
+          DialogUtils.showMessage(
+            context: context,
+            message: 'The account already exists for that email.',
+            title: 'Error ',
+            positiveActionName: 'Ok',
+
+          );
+          }
+      } catch (e) {
+        //todo:hide loading
+        DialogUtils.hideLoading(context: context);
+        //todo:show message=>error
+        DialogUtils.showMessage(
+          context: context,
+          message: e.toString(),
+          title: 'Error ',
+          positiveActionName: 'Ok',
+
+        );
+      }
 
     }
   }

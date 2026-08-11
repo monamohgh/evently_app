@@ -10,12 +10,19 @@ import 'package:evently_app/ui/screens/register/register_screen.dart';
 import 'package:evently_app/ui/screens/welcome_screen.dart';
 import 'package:evently_app/utils/app_routes.dart';
 import 'package:evently_app/utils/app_theme.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'firebase_options.dart';
 import 'l10n/app_localizations.dart';
 
-void main() {
+void main()async {
+  /// when the main is async should write this line=>wait until the firebase initialize then run the app
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     MultiProvider(
         providers: [

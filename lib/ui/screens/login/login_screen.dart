@@ -1,4 +1,6 @@
 import 'package:evently_app/utils/app_style.dart';
+import 'package:evently_app/utils/dialog_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,8 +21,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  var emailController = TextEditingController();
-  var passwordController = TextEditingController();
+  var emailController = TextEditingController(text: 'mona@gmail.com');
+  var passwordController = TextEditingController(text: '123456');
   var formKey = GlobalKey<FormState>();
   bool _passwordVisible = true;
 
@@ -93,6 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFormFieldWidget(
                   keyboardType: TextInputType.number,
                   obscureText: !_passwordVisible,
+
                   ///This will obscure text dynamically
                   controller: passwordController,
                   validator: (text) {
@@ -243,10 +246,58 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void login() {
+  void login() async {
     if (formKey.currentState!.validate() == true) {
       //todo:login
-      // Navigator.pushNamed(context, AppRoutes.homeRouteName);
+      try {
+        //todo:show loading
+        DialogUtils.showLoading(context: context, loadingText: 'Loading...');
+        final credential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+              email: emailController.text,
+              password: passwordController.text,
+            );
+        //todo:hide loading
+        DialogUtils.hideLoading(context: context);
+        //todo:show message=>success
+        DialogUtils.showMessage(
+          context: context,
+          message: 'Login Successfully',
+          title: 'Success',
+          positiveActionName: 'Ok',
+          positiveAction: () {
+            Navigator.pushNamed(context, AppRoutes.homeRouteName);
+          },
+        );
+
+        print('id: ${credential.user?.uid}');
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'invalid-credential') {
+          //todo:hide loading
+          DialogUtils.hideLoading(context: context);
+
+          //todo:show message=>error
+          DialogUtils.showMessage(
+            context: context,
+            message:
+                'The supplied auth credential is incorrect, malformed or has expired.',
+            title: 'Error ',
+            positiveActionName: 'Ok',
+
+          );
+        }
+      } catch (e) {
+        //todo:hide loading
+        DialogUtils.hideLoading(context: context);
+        //todo:show message=>error
+        DialogUtils.showMessage(
+          context: context,
+          message: e.toString(),
+                title: 'Error ',
+          positiveActionName: 'Ok',
+
+        );
+      }
     }
   }
 }
