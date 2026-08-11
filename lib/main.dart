@@ -1,5 +1,6 @@
 import 'package:evently_app/providers/app_language_provider.dart';
 import 'package:evently_app/providers/app_theme_provider.dart';
+import 'package:evently_app/providers/user_provider.dart';
 
 import 'package:evently_app/ui/screens/forget_password.dart';
 import 'package:evently_app/ui/screens/home/home_screen.dart';
@@ -27,7 +28,8 @@ void main()async {
     MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) =>AppLanguageProvider(),),
-          ChangeNotifierProvider(create: (context) => AppThemeProvider(),)
+          ChangeNotifierProvider(create: (context) => AppThemeProvider(),),
+          ChangeNotifierProvider(create: (context) => UserProvider(),)
 
     ],
     child: const MyApp()),

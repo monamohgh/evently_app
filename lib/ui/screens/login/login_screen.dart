@@ -1,3 +1,5 @@
+import 'package:evently_app/firebase_utils.dart';
+import 'package:evently_app/providers/user_provider.dart';
 import 'package:evently_app/utils/app_style.dart';
 import 'package:evently_app/utils/dialog_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -250,16 +252,25 @@ class _LoginScreenState extends State<LoginScreen> {
     if (formKey.currentState!.validate() == true) {
       //todo:login
       try {
-        //todo:show loading
+        //todo:1-show loading
         DialogUtils.showLoading(context: context, loadingText: 'Loading...');
+        //todo:2-login FirebaseAuth
         final credential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(
               email: emailController.text,
               password: passwordController.text,
             );
-        //todo:hide loading
+        //todo:3-read user from fireStore
+       var user= await FirebaseUtils.readUserFromFireStore(credential.user?.uid??'');
+       if(user==null){
+         return;
+       }
+        //todo:4-save user in provider
+        var userProvider=Provider.of<UserProvider>(context,listen: false);
+        userProvider.updateUser(user);
+        //todo:5-hide loading
         DialogUtils.hideLoading(context: context);
-        //todo:show message=>success
+        //todo:6-show message=>success
         DialogUtils.showMessage(
           context: context,
           message: 'Login Successfully',
@@ -270,7 +281,6 @@ class _LoginScreenState extends State<LoginScreen> {
           },
         );
 
-        print('id: ${credential.user?.uid}');
       } on FirebaseAuthException catch (e) {
         if (e.code == 'invalid-credential') {
           //todo:hide loading

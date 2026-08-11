@@ -1,5 +1,6 @@
 import 'package:evently_app/l10n/app_localizations.dart';
 import 'package:evently_app/providers/app_language_provider.dart';
+import 'package:evently_app/providers/user_provider.dart';
 import 'package:evently_app/ui/screens/home/tabs/home/tab_item_widget.dart';
 import 'package:evently_app/utils/app_colors.dart';
 import 'package:evently_app/utils/app_style.dart';
@@ -24,6 +25,7 @@ class _HomeTabState extends State<HomeTab> {
   Widget build(BuildContext context) {
     var themeProvider = Provider.of<AppThemeProvider>(context);
     var languageProvider = Provider.of<AppLanguageProvider>(context);
+    var userProvider=Provider.of<UserProvider>(context);
     List<String> eventsNameList = [
       AppLocalizations.of(context)!.all,
       AppLocalizations.of(context)!.sport,
@@ -54,7 +56,7 @@ class _HomeTabState extends State<HomeTab> {
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         Text(
-                          'Mona Gh',
+                         userProvider.currentUser!.name,
                           style: Theme.of(context).textTheme.headlineMedium,
                         ),
                       ],

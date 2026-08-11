@@ -1,3 +1,6 @@
+import 'package:evently_app/firebase_utils.dart';
+import 'package:evently_app/model/my_user.dart';
+import 'package:evently_app/providers/user_provider.dart';
 import 'package:evently_app/utils/app_style.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -294,15 +297,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
       //todo:register
       ///FirebaseAuth.instance=>create object from FirebaseAuth class
       try {
-        //todo:show loading
+        //todo:1-show loading
         DialogUtils.showLoading(context: context, loadingText: 'Waiting....');
+        //todo:2-firebaseAuth
         final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text,
           password: passwordController.text,
         );
-        //todo:hide loading
+        MyUser myUser=MyUser(
+            name: nameController.text,
+            email: emailController.text,
+            id: credential.user?.uid??'');
+        //todo:3-save user in  firestore
+        await FirebaseUtils.addUserInFireStore(myUser);
+
+        /// we create provider outside the build but make listen=false
+        /// listen=false => it means give me the data once if it changed I will not be notified
+        /// because i am outside the build I am not interested of the  identity of the user in the provider
+        //todo:4-save user  provider
+        var userProvider=Provider.of<UserProvider>(context,listen: false);
+        userProvider.updateUser(myUser);
+        //todo:5-hide loading
         DialogUtils.hideLoading(context: context);
-        //todo:show message=>success
+        //todo:6-show message=>success
         DialogUtils.showMessage(context: context,
           message: 'Register Successfully',
           title: 'Success',

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../providers/app_theme_provider.dart';
+import '../../../../../providers/user_provider.dart';
 
 
 class ProfileTab extends StatelessWidget {
@@ -18,6 +19,8 @@ class ProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var themeProvider = Provider.of<AppThemeProvider>(context);
+    var userProvider=Provider.of<UserProvider>(context);
+
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: SizeConfig.width(context) * .04,
@@ -31,9 +34,9 @@ class ProfileTab extends StatelessWidget {
               radius: 50,
               backgroundImage: AssetImage(AppAssets.route),
             ),
-            Text('Mona Gh', style: Theme.of(context).textTheme.headlineLarge),
+            Text(userProvider.currentUser!.name, style: Theme.of(context).textTheme.headlineLarge),
             Text(
-              'mona@gmail.com',
+              userProvider.currentUser!.email,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             ProfileItem(
