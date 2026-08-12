@@ -9,7 +9,7 @@ import '../../../../../providers/app_theme_provider.dart';
 class TabItemWidget extends StatelessWidget {
   final bool isSelected;
    final String eventName;
-  const TabItemWidget({super.key,required this.isSelected,required this.eventName});
+  const TabItemWidget({super.key,required this.isSelected,required this.eventName,});
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +32,7 @@ class TabItemWidget extends StatelessWidget {
         children: [
           Text(eventName,style: isSelected?AppStyle.medium16White:
             Theme.of(context).textTheme.headlineMedium,),
+
         ],
       ),
     );

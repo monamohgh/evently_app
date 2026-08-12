@@ -4,8 +4,10 @@ import 'package:evently_app/ui/screens/home/tabs/profile/widgets/change_language
 import 'package:evently_app/ui/screens/home/tabs/profile/widgets/profile_item.dart';
 import 'package:evently_app/utils/app_assets.dart';
 import 'package:evently_app/utils/app_colors.dart';
+import 'package:evently_app/utils/app_routes.dart';
 import 'package:evently_app/utils/app_style.dart';
 import 'package:evently_app/utils/size_config.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -75,7 +77,10 @@ class ProfileTab extends StatelessWidget {
               title: AppLocalizations.of(context)!.logout,
               icon: IconButton(
                 onPressed: () {
-                  //todo:logout
+                  //todo:navigate to login
+                  Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.loginRouteName,  (route) => false ,);
+                  ///to logout from firebase
+                  // FirebaseAuth.instance.signOut();
                 },
                 icon: Icon(Icons.logout, size: 25),
                 color: AppColors.redColor,

@@ -1,9 +1,14 @@
+import 'package:evently_app/firebase_utils.dart';
+import 'package:evently_app/model/event.dart';
+import 'package:evently_app/providers/event_provider.dart';
 import 'package:evently_app/ui/screens/home/tabs/home/add_event/date_or_time_widget.dart';
 import 'package:evently_app/ui/screens/home/tabs/home/tab_item_widget.dart';
 import 'package:evently_app/ui/screens/widgets/elevated_button_widget.dart';
 import 'package:evently_app/ui/screens/widgets/text_form_field_widget.dart';
 import 'package:evently_app/utils/app_style.dart';
+import 'package:evently_app/utils/toast_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -45,6 +50,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
   var formKey=GlobalKey<FormState>();
   var title='';
   var description='';
+  String selectedEventImage='';
+  String selectedEventName='';
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +63,10 @@ class _AddEventScreenState extends State<AddEventScreen> {
       AppLocalizations.of(context)!.book_club,
       AppLocalizations.of(context)!.exhibition,
     ];
+    selectedEventName=eventsNameList[selectedIndex];
+    selectedEventImage=themeProvider.isDarkMode()
+    ?eventDarkImagesList[selectedIndex]
+        :eventLightImagesList[selectedIndex];
     return Scaffold(
       appBar: AppBar(
         leading: Padding(
@@ -119,9 +130,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                     image: DecorationImage(
                       fit: BoxFit.fill,
                       image: AssetImage(
-                        themeProvider.isDarkMode()
-                            ? eventDarkImagesList[selectedIndex]
-                            : eventLightImagesList[selectedIndex],
+                       selectedEventImage
                       ),
                     ),
                   ),
@@ -228,6 +237,40 @@ class _AddEventScreenState extends State<AddEventScreen> {
     if(formKey.currentState?.validate()==true){
       ///validate method to see if validator inside the textFromField return String(return false)=>invalid or null(return true)=>valid
       //todo:add event
+      Event event=Event(
+          eventName: selectedEventName,
+          eventDate: DateTime(selectedDate!.year,
+              selectedDate!.month,
+            selectedDate!.day,
+            selectedTime!.hour,
+            selectedTime!.minute,
+
+          ),
+          eventDescription: description,
+          eventImage: selectedEventImage,
+          eventTitle:title,
+        eventCategoryIndex: selectedIndex+1
+      );
+      FirebaseUtils.addEventInFireStore(event)
+      /// to listen to the future that returned to me in the success=>then
+      /// in the error=>catchError
+      .then((value) {
+     ToastUtils.showToastMessage(
+         message: 'Event Added Successfully',
+         backgroundColor: AppColors.mainLightColor,
+         textColor: AppColors.whiteColor);
+     //todo:call getAllEvents from providers to make it real time changes
+     // var eventProvider=Provider.of<EventProvider>(context,listen: false);
+     // eventProvider.getAllEvents();
+        Navigator.pop(context);
+      },)
+          .catchError((error) {
+        ToastUtils.showToastMessage(
+            message: error.toString(),
+            backgroundColor: AppColors.mainLightColor,
+            textColor: AppColors.whiteColor);
+          },)
+      ;
 
     }
   }

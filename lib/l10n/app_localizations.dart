@@ -481,6 +481,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Get started'**
   String get get_started;
+
+  /// No description provided for @no_events_found.
+  ///
+  /// In en, this message translates to:
+  /// **' No Events Found'**
+  String get no_events_found;
 }
 
 class _AppLocalizationsDelegate

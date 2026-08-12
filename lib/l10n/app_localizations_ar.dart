@@ -90,7 +90,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get birthday => 'عيد الميلاد';
 
   @override
-  String get meeting => 'المقابلات';
+  String get meeting => 'الاجتماع';
 
   @override
   String get book_club => 'نادي الكتاب';
@@ -206,4 +206,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get get_started => 'هيا نبدأ';
+
+  @override
+  String get no_events_found => ' لا يوجد أحداث';
 }
