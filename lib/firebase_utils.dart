@@ -45,7 +45,6 @@ class FirebaseUtils {
         .get();
     return querySnapshot.data();
   }
-
   static Future<void> addEventInFireStore(Event event) {
     //todo:1- collection
     CollectionReference<Event> collectionRef = getEventsCollections();
@@ -57,6 +56,12 @@ class FirebaseUtils {
     ///auto id
     //todo:save data
     return docRef.set(event);
+  }
+  static Future<void>deleteEventFireSore(String id){
+    return getEventsCollections().doc(id).delete();
+  }
+  static Future<void>updateEventFirestore(Event event){
+    return getEventsCollections().doc(event.eventId).update(event.toFireStore());
   }
 
   //todo:Real Time Changes=>snapshot method

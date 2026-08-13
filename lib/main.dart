@@ -2,6 +2,7 @@ import 'package:evently_app/providers/app_language_provider.dart';
 import 'package:evently_app/providers/app_theme_provider.dart';
 import 'package:evently_app/providers/event_provider.dart';
 import 'package:evently_app/providers/user_provider.dart';
+import 'package:evently_app/ui/screens/event_details.dart';
 
 import 'package:evently_app/ui/screens/forget_password.dart';
 import 'package:evently_app/ui/screens/home/home_screen.dart';
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.registerRouteName:(context)=>RegisterScreen(),
         AppRoutes.forgetPasswordRouteName:(context)=>ForgetPassword(),
         AppRoutes.addEventRouteName:(context)=>AddEventScreen(),
+        AppRoutes.eventDetailsRouteName:(context)=>EventDetails(),
       },
       locale: Locale(languageProvider.appLanguage),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
