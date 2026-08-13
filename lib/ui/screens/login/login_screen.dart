@@ -4,9 +4,11 @@ import 'package:evently_app/utils/app_style.dart';
 import 'package:evently_app/utils/dialog_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
 import '../../../l10n/app_localizations.dart';
+import '../../../model/my_user.dart';
 import '../../../providers/app_theme_provider.dart';
 import '../../../utils/app_assets.dart';
 import '../../../utils/app_colors.dart';
@@ -222,6 +224,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ElevatedButtonWidget(
                   onPressed: () {
                     //todo:login with google
+                    signInWithGoogle();
                   },
                   verticalPadding: SizeConfig.height(context) * .02,
                   backgroundColor: themeProvider.isDarkMode()
@@ -261,12 +264,14 @@ class _LoginScreenState extends State<LoginScreen> {
               password: passwordController.text,
             );
         //todo:3-read user from fireStore
-       var user= await FirebaseUtils.readUserFromFireStore(credential.user?.uid??'');
-       if(user==null){
-         return;
-       }
+        var user = await FirebaseUtils.readUserFromFireStore(
+          credential.user?.uid ?? '',
+        );
+        if (user == null) {
+          return;
+        }
         //todo:4-save user in provider
-        var userProvider=Provider.of<UserProvider>(context,listen: false);
+        var userProvider = Provider.of<UserProvider>(context, listen: false);
         userProvider.updateUser(user);
         //todo:5-hide loading
         DialogUtils.hideLoading(context: context);
@@ -280,7 +285,6 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.pushNamed(context, AppRoutes.homeRouteName);
           },
         );
-
       } on FirebaseAuthException catch (e) {
         if (e.code == 'invalid-credential') {
           //todo:hide loading
@@ -293,7 +297,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 'The supplied auth credential is incorrect, malformed or has expired.',
             title: 'Error ',
             positiveActionName: 'Ok',
-
           );
         }
       } catch (e) {
@@ -303,11 +306,83 @@ class _LoginScreenState extends State<LoginScreen> {
         DialogUtils.showMessage(
           context: context,
           message: e.toString(),
-                title: 'Error ',
+          title: 'Error ',
           positiveActionName: 'Ok',
-
         );
       }
     }
   }
+  void signInWithGoogle() async {
+    try {
+      // 1. إظهار مؤشر التحميل
+      DialogUtils.showLoading(context: context, loadingText: 'Loading...');
+      await GoogleSignIn().signOut();
+
+      // 2. بدء عملية تسجيل الدخول عبر Google
+      final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
+
+      // إذا أغلق المستخدم النافذة ولم يقتّر إيميل
+      if (gUser == null) {
+        if (mounted) DialogUtils.hideLoading(context: context);
+        return;
+      }
+
+      // 3. جلب تفاصيل التوثيق
+      final GoogleSignInAuthentication gAuth = await gUser.authentication;
+
+      // 4. إنشاء الـ Credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: gAuth.accessToken,
+        idToken: gAuth.idToken,
+      );
+
+      // 5. تسجيل الدخول في Firebase
+      UserCredential userCredential =
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      // 6. قراءة بيانات المستخدم من Firestore
+      var user = await FirebaseUtils.readUserFromFireStore(
+        userCredential.user?.uid ?? '',
+      );
+
+      // إذا كان أول دخول للمستخدم عبر جوجل، ننشئ له سجلاً في Firestore
+      if (user == null && userCredential.user != null) {
+        var newUser = MyUser(
+          id: userCredential.user!.uid,
+          name: userCredential.user!.displayName ?? '',
+          email: userCredential.user!.email ?? '',
+        );
+        await FirebaseUtils.addUserInFireStore(newUser);
+        user = newUser;
+      }
+
+      // التأكد من أن الـ Widget ما زالت موجودة قبل استخدام الـ context
+      if (!mounted) return;
+
+      // 7. حفظ المستخدم في الـ Provider
+      if (user != null) {
+        var userProvider = Provider.of<UserProvider>(context, listen: false);
+        userProvider.updateUser(user);
+      }
+
+      // 8. إخفاء التحميل
+      DialogUtils.hideLoading(context: context);
+
+      // 9. الانتقال لشاشة الـ Home
+      Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil(AppRoutes.homeRouteName, (route) => false);
+    } catch (e) {
+      if (mounted) {
+        DialogUtils.hideLoading(context: context);
+        DialogUtils.showMessage(
+          context: context,
+          message: e.toString(),
+          title: 'Error',
+          positiveActionName: 'Ok',
+        );
+      }
+    }
+  }
+
 }
