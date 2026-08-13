@@ -71,11 +71,9 @@ class EventItemWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: Expanded(
-                      child: Text(
-                        event.eventTitle,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
+                    child: Text(
+                      event.eventTitle,
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
 
