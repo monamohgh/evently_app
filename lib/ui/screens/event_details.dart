@@ -57,6 +57,19 @@ class _EventDetailsState extends State<EventDetails> {
   Widget build(BuildContext context) {
     var event = ModalRoute.of(context)!.settings.arguments as Event;
     var themeProvider = Provider.of<AppThemeProvider>(context);
+    List<String> eventsNameList = [
+      AppLocalizations.of(context)!.sport,
+      AppLocalizations.of(context)!.birthday,
+      AppLocalizations.of(context)!.meeting,
+      AppLocalizations.of(context)!.book_club,
+      AppLocalizations.of(context)!.exhibition,
+    ];
+    int eventIndex = eventsNameList.indexOf(event.eventName);
+    if (eventIndex == -1) eventIndex = 0;
+
+    String currentImage = themeProvider.isDarkMode()
+        ? eventDarkImagesList[eventIndex]
+        : eventLightImagesList[eventIndex];
     return Scaffold(
       appBar: AppBar(
         leading: Padding(
@@ -161,7 +174,7 @@ class _EventDetailsState extends State<EventDetails> {
                 ),
                 image: DecorationImage(
                   fit: BoxFit.fill,
-                  image: AssetImage(event.eventImage),
+                  image: AssetImage(currentImage),
                 ),
               ),
             ),

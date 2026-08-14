@@ -100,7 +100,7 @@ class _EventItemWidgetState extends State<EventItemWidget> {
                   color: themeProvider.isDarkMode()
                       ? AppColors.darkInputColor
                       : AppColors.strokeWhiteColor,
-                ),
+                ),  
                 child: Padding(
                   padding:  EdgeInsets.symmetric(horizontal: SizeConfig.width(context)*.02),
                   child: Row(
