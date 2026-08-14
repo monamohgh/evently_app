@@ -43,6 +43,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     var themeProvider = Provider.of<AppThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         actionsPadding: EdgeInsets.symmetric(
           horizontal: SizeConfig.width(context) * .02,
         ),

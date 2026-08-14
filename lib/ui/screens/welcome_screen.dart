@@ -139,7 +139,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
                 onPressed: () {
                   //todo:navigate to onboarding screen
-                  Navigator.pushNamed(context, AppRoutes.onBoardingRouteName);
+                  Navigator.pushReplacementNamed(context, AppRoutes.onBoardingRouteName);
                 },
                 backgroundColor: themeProvider.isDarkMode()
                     ? AppColors.mainDarkColor

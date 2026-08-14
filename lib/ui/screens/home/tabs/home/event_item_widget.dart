@@ -22,9 +22,31 @@ class EventItemWidget extends StatefulWidget {
 }
 
 class _EventItemWidgetState extends State<EventItemWidget> {
+  List<String> eventLightImagesList = [
+    AppAssets.sportLight,
+    AppAssets.birthdayLight,
+    AppAssets.meetingLight,
+    AppAssets.bookClubLight,
+    AppAssets.exhibitionLight,
+  ];
+
+  List<String> eventDarkImagesList = [
+    AppAssets.sportDark,
+    AppAssets.birthdayDark,
+    AppAssets.meetingDark,
+    AppAssets.bookClubDark,
+    AppAssets.exhibitionDark,
+  ];
   @override
   Widget build(BuildContext context) {
     var themeProvider = Provider.of<AppThemeProvider>(context);
+    int categoryIndex = (widget.event.eventCategoryIndex ?? 1) - 1;
+    if (categoryIndex < 0 || categoryIndex >= eventLightImagesList.length) {
+      categoryIndex = 0;
+    }
+    String currentEventImage = themeProvider.isDarkMode()
+        ? eventDarkImagesList[categoryIndex]
+        : eventLightImagesList[categoryIndex];
     return InkWell(
       onTap: () {
         //todo:go to details event screen
@@ -38,7 +60,7 @@ class _EventItemWidgetState extends State<EventItemWidget> {
           border: Border.all(color: Theme.of(context).dividerColor, width: 2),
           image: DecorationImage(
             fit: BoxFit.fill,
-            image: AssetImage(widget.event.eventImage),
+            image: AssetImage(currentEventImage),
           ),
         ),
         child: Padding(
@@ -79,46 +101,49 @@ class _EventItemWidgetState extends State<EventItemWidget> {
                       ? AppColors.darkInputColor
                       : AppColors.strokeWhiteColor,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.event.eventTitle,
-                        style: Theme.of(context).textTheme.bodySmall,
+                child: Padding(
+                  padding:  EdgeInsets.symmetric(horizontal: SizeConfig.width(context)*.02),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          widget.event.eventTitle,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
                       ),
-                    ),
 
-                    IconButton(
-                      onPressed: () {
-                        //todo:add favorite event
-                        FirebaseUtils.updateIsFavourite(widget.event)
-                            .then((value) {
-                              ToastUtils.showToastMessage(
-                                message: 'Event Updated Successfully',
-                                backgroundColor: AppColors.greenColor,
-                                textColor: AppColors.whiteColor,
-                              );
-                            })
-                            .catchError((error) {
-                              ToastUtils.showToastMessage(
-                                message: error.toString(),
-                                backgroundColor: AppColors.greenColor,
-                                textColor: AppColors.whiteColor,
-                              );
-                            });
-                      },
-                      icon: widget.event.isFavourite
-                          ? Icon(
-                              Icons.favorite,
-                              color: Theme.of(context).cardColor,
-                            )
-                          : Icon(
-                              Icons.favorite_border_outlined,
-                              color: Theme.of(context).cardColor,
-                            ),
-                    ),
-                  ],
+                      IconButton(
+                        onPressed: () {
+                          //todo:add favorite event
+                          FirebaseUtils.updateIsFavourite(widget.event)
+                              .then((value) {
+                                ToastUtils.showToastMessage(
+                                  message: 'Event Updated Successfully',
+                                  backgroundColor: AppColors.greenColor,
+                                  textColor: AppColors.whiteColor,
+                                );
+                              })
+                              .catchError((error) {
+                                ToastUtils.showToastMessage(
+                                  message: error.toString(),
+                                  backgroundColor: AppColors.greenColor,
+                                  textColor: AppColors.whiteColor,
+                                );
+                              });
+                        },
+                        icon: widget.event.isFavourite
+                            ? Icon(
+                                Icons.favorite,
+                                color: Theme.of(context).cardColor,
+                              )
+                            : Icon(
+                                Icons.favorite_border_outlined,
+                                color: Theme.of(context).cardColor,
+                              ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

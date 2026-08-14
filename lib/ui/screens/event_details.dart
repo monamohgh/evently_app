@@ -1,5 +1,6 @@
 import 'package:evently_app/ui/screens/widgets/elevated_button_widget.dart';
 import 'package:evently_app/ui/screens/widgets/text_form_field_widget.dart';
+import 'package:evently_app/utils/app_routes.dart';
 import 'package:evently_app/utils/dialog_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -108,7 +109,8 @@ class _EventDetailsState extends State<EventDetails> {
             ),
             child: InkWell(
               onTap: () {
-                //todo:edit
+                //todo: Navigate to edit screen
+                Navigator.pushNamed(context, AppRoutes.editEventRouteName,arguments:event);
               },
               child: Icon(
                 size: 30,
@@ -119,6 +121,7 @@ class _EventDetailsState extends State<EventDetails> {
               ),
             ),
           ),
+          SizedBox(width: SizeConfig.width(context)*.02,),
           Container(
             padding: EdgeInsets.symmetric(
               horizontal: SizeConfig.width(context) * .02,
@@ -186,6 +189,9 @@ class _EventDetailsState extends State<EventDetails> {
                       horizontal: SizeConfig.width(context) * .02,
                     ),
                     decoration: BoxDecoration(
+                      color: themeProvider.isDarkMode()
+                      ?AppColors.darkInputColor
+                      :AppColors.lightBgColor,
                       border: Border.all(color: Theme.of(context).dividerColor),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -202,7 +208,7 @@ class _EventDetailsState extends State<EventDetails> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(DateFormat('dd MMM').format(event.eventDate)),
+                      Text(DateFormat('dd MMMM').format(event.eventDate,),style:Theme.of(context).textTheme.displayLarge,),
                       Text(
                         DateFormat('hh:mm a').format(event.eventDate),
                         style: Theme.of(context).textTheme.bodyLarge,
@@ -256,4 +262,5 @@ class _EventDetailsState extends State<EventDetails> {
     },);
 
   }
+
 }

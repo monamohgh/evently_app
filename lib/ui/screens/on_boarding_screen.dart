@@ -23,6 +23,7 @@ class OnBoardingScreen extends StatefulWidget {
 
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
   final controller = PageController();
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -33,37 +34,42 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
         : ThemeMode.light;
     return Scaffold(
       appBar: AppBar(
-        leading: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: SizeConfig.width(context) * .02,
-            vertical: SizeConfig.height(context) * .01,
-          ),
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: SizeConfig.width(context) * .03,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              border: BoxBorder.all(
-                color: themeProvider.isDarkMode()
-                    ? AppColors.strokeDarkColor
-                    : AppColors.strokeWhiteColor,
-              ),
-            ),
-            child: InkWell(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Icon(
-                size: 30,
-                Icons.arrow_back_ios,
-                color: themeProvider.isDarkMode()
-                    ? AppColors.whiteColor
-                    : AppColors.mainLightColor,
-              ),
-            ),
-          ),
-        ),
+        automaticallyImplyLeading: false,
+        leading:
+            currentIndex >
+                0 //show arrow from the second page
+            ? Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: SizeConfig.width(context) * .02,
+                  vertical: SizeConfig.height(context) * .01,
+                ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SizeConfig.width(context) * .03,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: BoxBorder.all(
+                      color: themeProvider.isDarkMode()
+                          ? AppColors.strokeDarkColor
+                          : AppColors.strokeWhiteColor,
+                    ),
+                  ),
+                  child: InkWell(
+                    onTap: () {
+                      controller.previousPage(duration: const Duration(milliseconds: 500), curve: Curves.easeIn);
+                    },
+                    child: Icon(
+                      size: 30,
+                      Icons.arrow_back_ios,
+                      color: themeProvider.isDarkMode()
+                          ? AppColors.whiteColor
+                          : AppColors.mainLightColor,
+                    ),
+                  ),
+                ),
+              )
+            : null,
         actionsPadding: EdgeInsets.symmetric(
           horizontal: SizeConfig.width(context) * .02,
         ),
@@ -77,41 +83,44 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
         ),
         centerTitle: true,
         actions: [
-          InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.loginRouteName);
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: SizeConfig.width(context) * .05,
-                vertical: SizeConfig.height(context) * .01,
-              ),
-              decoration: BoxDecoration(
-                border: BoxBorder.all(
-                  color: themeProvider.isDarkMode()
-                      ? AppColors.strokeDarkColor
-                      : AppColors.strokeWhiteColor,
+          if (currentIndex < 2)
+            InkWell(
+              onTap: () {
+              Navigator.pushReplacementNamed(context, AppRoutes.loginRouteName);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: SizeConfig.width(context) * .05,
+                  vertical: SizeConfig.height(context) * .01,
                 ),
-                borderRadius: BorderRadius.circular(8),
-                color: themeProvider.isDarkMode()
-                    ? AppColors.darkInputColor
-                    : AppColors.whiteColor,
-              ),
-              child: Text(
-                AppLocalizations.of(context)!.skip,
-                  style: Theme.of(context).textTheme.displaySmall
-                  // themeProvider.isDarkMode()
-                  //     ?AppStyle.medium18White
-                  //     :AppStyle.medium18MainColor
+                decoration: BoxDecoration(
+                  border: BoxBorder.all(
+                    color: themeProvider.isDarkMode()
+                        ? AppColors.strokeDarkColor
+                        : AppColors.strokeWhiteColor,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                  color: themeProvider.isDarkMode()
+                      ? AppColors.darkInputColor
+                      : AppColors.whiteColor,
+                ),
+                child: Text(
+                  AppLocalizations.of(context)!.skip,
+                  style: Theme.of(context).textTheme.displaySmall,
+                ),
               ),
             ),
-          ),
         ],
       ),
       body: Stack(
         children: [
           PageView(
             controller: controller,
+            onPageChanged: (index) {
+              setState(() {
+                currentIndex = index;
+              });
+            },
             children: [
               pageViewItem(
                 image: themeProvider.isDarkMode()
@@ -123,8 +132,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 body: AppLocalizations.of(context)!.second_onboarding,
 
                 button: ElevatedButtonWidget(
-                  verticalPadding: SizeConfig.height(context)*.01,
-                  child:Text(AppLocalizations.of(context)!.next,style: AppStyle.medium20White,) ,
+                  verticalPadding: SizeConfig.height(context) * .01,
+                  child: Text(
+                    AppLocalizations.of(context)!.next,
+                    style: AppStyle.medium20White,
+                  ),
                   onPressed: () {
                     controller.nextPage(
                       duration: Duration(milliseconds: 500),
@@ -132,8 +144,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                     );
                   },
                   backgroundColor: themeProvider.isDarkMode()
-                      ?AppColors.mainDarkColor
-                      :AppColors.mainLightColor,
+                      ? AppColors.mainDarkColor
+                      : AppColors.mainLightColor,
                 ),
               ),
               pageViewItem(
@@ -143,18 +155,21 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 title: AppLocalizations.of(context)!.effortless_event_planning,
                 body: AppLocalizations.of(context)!.third_onboarding,
                 button: ElevatedButtonWidget(
-                  verticalPadding: SizeConfig.height(context)*.01,
+                  verticalPadding: SizeConfig.height(context) * .01,
 
-                  child:Text( AppLocalizations.of(context)!.next,style: AppStyle.medium20White,),
+                  child: Text(
+                    AppLocalizations.of(context)!.next,
+                    style: AppStyle.medium20White,
+                  ),
                   onPressed: () {
                     controller.nextPage(
-                      duration: Duration(milliseconds: 500),
+                      duration: const Duration(milliseconds: 500),
                       curve: Curves.easeIn,
                     );
                   },
                   backgroundColor: themeProvider.isDarkMode()
-                      ?AppColors.mainDarkColor
-                      :AppColors.mainLightColor,
+                      ? AppColors.mainDarkColor
+                      : AppColors.mainLightColor,
                 ),
               ),
               pageViewItem(
@@ -166,14 +181,17 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 )!.connect_with_friends_share_moments,
                 body: AppLocalizations.of(context)!.fourth_onboarding,
                 button: ElevatedButtonWidget(
-                  verticalPadding: SizeConfig.height(context)*.01,
-                  child: Text(AppLocalizations.of(context)!.get_started,style: AppStyle.medium20White,),
+                  verticalPadding: SizeConfig.height(context) * .01,
+                  child: Text(
+                    AppLocalizations.of(context)!.get_started,
+                    style: AppStyle.medium20White,
+                  ),
                   onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.loginRouteName);
+                    Navigator.pushReplacementNamed(context, AppRoutes.loginRouteName);
                   },
                   backgroundColor: themeProvider.isDarkMode()
-                      ?AppColors.mainDarkColor
-                      :AppColors.mainLightColor,
+                      ? AppColors.mainDarkColor
+                      : AppColors.mainLightColor,
                 ),
               ),
             ],
@@ -181,23 +199,23 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           Container(
             alignment: Alignment(0, 0),
             child: SmoothPageIndicator(
-            controller: controller,
-                count: 3,
-               effect: CustomizableEffect(
-                   dotDecoration: DotDecoration(
-                     borderRadius: BorderRadius.circular(15),
-                     color: themeProvider.isDarkMode()
-                         ?  AppColors.lightBgColor
-                           :AppColors.greyColor
-                   ),
-                   activeDotDecoration: DotDecoration(
-                       borderRadius: BorderRadius.circular(15),
-                       color: themeProvider.isDarkMode()
-                           ?  AppColors.mainDarkColor
-                           :AppColors.mainLightColor,
-                     width: 25
-                   )
-               ),
+              controller: controller,
+              count: 3,
+              effect: CustomizableEffect(
+                dotDecoration: DotDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: themeProvider.isDarkMode()
+                      ? AppColors.lightBgColor
+                      : AppColors.greyColor,
+                ),
+                activeDotDecoration: DotDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: themeProvider.isDarkMode()
+                      ? AppColors.mainDarkColor
+                      : AppColors.mainLightColor,
+                  width: 25,
+                ),
+              ),
             ),
           ),
         ],

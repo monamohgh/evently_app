@@ -7,5 +7,6 @@ class AppRoutes {
   static const String onBoardingRouteName="on_boarding_screen";
   static const String forgetPasswordRouteName="forget_password_screen";
   static const String eventDetailsRouteName="event_details_screen";
+  static const String editEventRouteName="edit_event_screen";
 
 }

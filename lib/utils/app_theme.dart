@@ -32,7 +32,8 @@ class AppTheme {
       titleLarge: AppStyle.regular14MainLightColor,
       titleMedium: AppStyle.medium20Black,
       titleSmall: AppStyle.medium18Black,
-      displaySmall: AppStyle.medium18MainColor///
+      displaySmall: AppStyle.medium18MainColor,///
+      displayLarge: AppStyle.medium16Black,
     ),
   );
 static final ThemeData darkTheme=ThemeData(
@@ -65,7 +66,8 @@ static final ThemeData darkTheme=ThemeData(
     titleLarge: AppStyle.regular14MainDarkColor,
     titleMedium: AppStyle.medium20WhiteDarkColor,
     titleSmall: AppStyle.medium18White,
-        displaySmall: AppStyle.medium18White///
+        displaySmall: AppStyle.medium18White,///
+      displayLarge: AppStyle.medium16MainDarkColor,
 
 
     )
