@@ -64,12 +64,9 @@ class _EventDetailsState extends State<EventDetails> {
       AppLocalizations.of(context)!.book_club,
       AppLocalizations.of(context)!.exhibition,
     ];
-    int eventIndex = eventsNameList.indexOf(event.eventName);
-    if (eventIndex == -1) eventIndex = 0;
-
     String currentImage = themeProvider.isDarkMode()
-        ? eventDarkImagesList[eventIndex]
-        : eventLightImagesList[eventIndex];
+        ? event.eventImage.replaceAll('Light', 'Dark').replaceAll('light', 'dark')
+        : event.eventImage.replaceAll('Dark', 'Light').replaceAll('dark', 'light');
     return Scaffold(
       appBar: AppBar(
         leading: Padding(
